@@ -1,0 +1,4 @@
+NUM_OF_EXAM_VERSIONS=8
+
+EXAM_NAME="midterm1"
+
