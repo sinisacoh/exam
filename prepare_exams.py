@@ -46,11 +46,13 @@ def main():
             choose_version=random.randint(0,len(all_questions[q])-1)
 #            info+=str(q).strip()+"_"+str(choose_version).strip()+","
             txt+="\n\n\n"
+            if all_questions[q][choose_version]["content"].split("\n")[0] == "NEWPAGE":
+                txt+=r"\newpage"+"\n\n"                
             if "QQQQQ" in all_questions[q][choose_version]["content"]:
-                txt+=all_questions[q][choose_version]["content"].replace("QQQQQ",r"\textbf{Problem "+q.strip()+"}").lstrip().rstrip()
+                txt+=all_questions[q][choose_version]["content"].replace("QQQQQ",r"\textbf{Problem "+q.strip()+"}").replace("NEWPAGE\n","").lstrip().rstrip()
             else:
                 txt+=r"\textbf{Problem "+q.strip()+r" } "
-                txt+=all_questions[q][choose_version]["content"].lstrip().rstrip()
+                txt+=all_questions[q][choose_version]["content"].replace("NEWPAGE\n","").lstrip().rstrip()
             txt+="\n"+r"\vspace{0.1cm}"+"\n\n"
 
             txt+=r"%PLACEHERESOLUTIONLATER++"+all_questions[q][choose_version]["filename"].strip()+"\n"
@@ -68,7 +70,7 @@ def main():
 #    f.close()
 
     for i in range(1,loc.NUM_OF_EXAM_VERSIONS+1):
-        os.system("pdflatex __tmp__"+str(i))
+        os.system("pdflatex -shell-escape __tmp__"+str(i))
         os.system("mv __tmp__"+str(i)+".pdf "+loc.EXAM_NAME.strip()+"__version_"+str(i)+".pdf")
 
 
