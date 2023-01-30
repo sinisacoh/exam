@@ -35,9 +35,14 @@ def main():
         ln=f.readlines()
         f.close()
 
-        out=""
+        is_snippet = False
         for l in ln:
-            if "%PLACEHERESOLUTIONLATER++" in l:
+            if r"\input{ten_lines.tex}" in l:
+                is_snippet=True
+
+        out=""
+        for il,l in enumerate(ln):
+            if is_snippet==False and "%PLACEHERESOLUTIONLATER++" in l:
                 aan=l.split("++")[-1].strip().replace("q_","a_")
                 out+=r"{\color{red}  {\bf Solution to the problem:} "+"\n\n"
                 if aan in all_solut.keys():
@@ -50,6 +55,16 @@ def main():
                     out+=all_grad[aangra]
                 out+=r"}"+"\n"
                 out+="\n"
+            elif is_snippet==True and r"\input{ten_lines.tex}" in l:
+                aan=None
+                for j in range(il,len(ln)):
+                    if "%PLACEHERESOLUTIONLATER++" in ln[j]:
+                        aan=ln[j].split("++")[-1].strip().replace("q_","a_")
+                        break
+                if aan == None:
+                    print("NOT FOUND!")
+                    exit()
+                out+=l.replace(r"\input{ten_lines.tex}",r"\input{"+aan+r"}")
             else:
                 out+=l
 
