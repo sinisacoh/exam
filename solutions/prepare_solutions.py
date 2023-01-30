@@ -60,7 +60,7 @@ def main():
         ff.write(out)
         ff.close()
 
-        os.system("pdflatex "+sol_fn_basis)
+        os.system("pdflatex -shell-escape "+sol_fn_basis)
         os.system("mv "+sol_fn_basis+".pdf "+sol_fn_basis.replace("__tmp_solution__","solution_")+".pdf")
 
                 
