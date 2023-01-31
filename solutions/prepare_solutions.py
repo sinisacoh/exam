@@ -35,14 +35,19 @@ def main():
         ln=f.readlines()
         f.close()
 
-        is_snippet = False
-        for l in ln:
-            if r"\input{ten_lines.tex}" in l:
-                is_snippet=True
+        is_snippet=False
+        is_blank_box=False
 
         out=""
         for il,l in enumerate(ln):
-            if is_snippet==False and "%PLACEHERESOLUTIONLATER++" in l:
+
+            if r"\input{ten_lines.tex}" in l:
+                is_snippet=True
+
+            if r"\input{blank_box.tex}" in l:
+                is_blank_box=True
+
+            if (is_snippet == False and is_blank_box == False) and "%PLACEHERESOLUTIONLATER++" in l:
                 aan=l.split("++")[-1].strip().replace("q_","a_")
                 out+=r"{\color{red}  {\bf Solution to the problem:} "+"\n\n"
                 if aan in all_solut.keys():
@@ -65,10 +70,28 @@ def main():
                     print("NOT FOUND!")
                     exit()
                 out+=l.replace(r"\input{ten_lines.tex}",r"\input{"+aan+r"}")
+            elif is_blank_box==True and r"\input{blank_box.tex}" in l:
+                aan=None
+                for j in range(il,len(ln)):
+                    if "%PLACEHERESOLUTIONLATER++" in ln[j]:
+                        aan=ln[j].split("++")[-1].strip().replace("q_","a_")
+                        break
+                if aan == None:
+                    print("NOT FOUND!")
+                    exit()
+                f = open(aan.replace(".tex",".py"),"r")
+                new_text = f.read()
+                f.close()
+                new_text = r"\begin{minted}{python}" + "\n" + new_text + r"\end{minted}" + "\n"
+                out+=l.replace(r"\input{blank_box.tex}",new_text)
             else:
                 out+=l
 
+            if "%PLACEHERESOLUTIONLATER++" in l:
+                is_snippet=False
+                is_blank_box=False
 
+                
         sol_fn_basis=fn.replace("../","").replace("__tmp__","__tmp_solution__").replace(".tex","")
                 
         ff=open(sol_fn_basis+".tex","w")
