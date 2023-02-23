@@ -3,8 +3,13 @@
 import glob
 import os
 
-def main():
-
+def do_all(include_grading_scheme):
+    
+    if include_grading_scheme is True:
+        suffix="_scheme"
+    else:
+        suffix=""
+        
     os.system("rm -rf fig ; mkdir fig ; cp -rf ../fig/* fig/")
 
     # read in all solutions
@@ -18,14 +23,15 @@ def main():
         all_solut[fn]=ln
 
     # read in all grading schemes
-    all_grad={}
-    allf=glob.glob("g_*.tex")
-    allf.sort()    
-    for fn in allf:
-        f=open(fn,"r")
-        ln=f.read()
-        f.close()
-        all_grad[fn]=ln
+    if include_grading_scheme is True:
+        all_grad={}
+        allf=glob.glob("g_*.tex")
+        allf.sort()    
+        for fn in allf:
+            f=open(fn,"r")
+            ln=f.read()
+            f.close()
+            all_grad[fn]=ln
 
     # place in solutions to the tex file
     allf=glob.glob("../__tmp__*.tex")
@@ -55,9 +61,11 @@ def main():
                 else:
                     out+=r"{\it SOLUTION WILL BE ADDED LATER.}"
                 aangra=l.split("++")[-1].strip().replace("q_","g_").split("_v")[0]+".tex"
-                if aangra in all_grad.keys():
-                    out+="\n\n"+r"{\bf Grading scheme:}"+"\n\n"
-                    out+=all_grad[aangra]
+                out+=r"\vspace{1cm}"+"\n"
+                if include_grading_scheme is True:
+                    if aangra in all_grad.keys():
+                        out+="\n\n"+r"{\bf Grading scheme:}"+"\n\n"
+                        out+=all_grad[aangra]
                 out+=r"}"+"\n"
                 out+="\n"
             elif is_snippet==True and r"\input{ten_lines.tex}" in l:
@@ -92,7 +100,7 @@ def main():
                 is_blank_box=False
 
                 
-        sol_fn_basis=fn.replace("../","").replace("__tmp__","__tmp_solution__").replace(".tex","")
+        sol_fn_basis=fn.replace("../","").replace("__tmp__","__tmp_solution__").replace(".tex","")+suffix
                 
         ff=open(sol_fn_basis+".tex","w")
         ff.write(out)
@@ -101,5 +109,9 @@ def main():
         os.system("pdflatex -shell-escape "+sol_fn_basis)
         os.system("mv "+sol_fn_basis+".pdf "+sol_fn_basis.replace("__tmp_solution__","solution_")+".pdf")
 
-                
+
+def main():
+    do_all(True)
+    do_all(False)
+        
 main()
