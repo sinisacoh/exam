@@ -53,7 +53,7 @@ def main():
             else:
                 txt+=r"\textbf{Problem "+q.strip()+r" } "
                 txt+=all_questions[q][choose_version]["content"].replace("NEWPAGE\n","").lstrip().rstrip()
-            txt+="\n"+r"\vspace{0.1cm}"+"\n\n"
+            txt+="\n"+r"\vspace{0.5cm}"+"\n\n"
 
             txt+=r"%PLACEHERESOLUTIONLATER++"+all_questions[q][choose_version]["filename"].strip()+"\n"
             
